@@ -12,10 +12,10 @@ function init() {
 
     scene = new THREE.Scene();
 
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
 
     boidling = new Boidling();
-    scene.add(boidling.mesh);
+    scene.add(boidling.getMesh());
 
     renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(new THREE.Color(0x000, 1.0));
@@ -23,8 +23,8 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.showMapEnabled = true;
 
-    camera.position.x = 100;
-    camera.position.y = 100;
+    camera.position.x = 0;
+    camera.position.y = 0;
     camera.position.z = 300;
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
@@ -55,7 +55,7 @@ function animate() {
     var delta = clock.getDelta();
     flyControls.update(delta);
 
-    boidling.update();
+    boidling.update(delta);
 
     renderer.render( scene, camera );
 }
