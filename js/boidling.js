@@ -3,32 +3,37 @@ Boidling = function () {
         0, // radiusTop
         20, // radiusBottom
         100, // height
-        20, // radiusSegments
-        20, // heightSegments
+        40, // radiusSegments
+        40, // heightSegments
         false // openEnded
     );
-
-
-
-
 
     var color = Math.floor(Math.random() * 16777215).toString(16)
     var material = new THREE.MeshBasicMaterial( {color: parseInt(color, 16), wireframe: true} );
 
-    var mesh = new THREE.Mesh(geometry, material);
+    var coneMesh = new THREE.Mesh(geometry, material);
+
+    coneMesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
+
+    var mesh = new THREE.Object3D();
+    mesh.add(coneMesh);
 
     this.getMesh = function() {
         return mesh;
     }
 
-    var autoForward = false;
-    var movementSpeed = 50;
+    var autoForward = true;
+    var movementSpeed = 100;
     var rollSpeed = Math.PI / 12;
 
     var tmpQuaternion = new THREE.Quaternion();
 
-    var moveState = { up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 1, pitchDown: 0, yawLeft: 1, yawRight: 0, rollLeft: 1, rollRight: 0 };
-    var moveVector = new THREE.Vector3( 0, 0, 0 );
+    var rand1 = (Math.random() * 5) - 2.5;
+    var rand2 = (Math.random() * 5) - 2.5;
+    var rand3 = (Math.random() * 5) - 2.5;
+
+    var moveState = {pitch: rand1, yaw: 0, roll: 0};
+    var moveVector = new THREE.Vector3( 0, 0, 1);
     var rotationVector = new THREE.Vector3( 0, 0, 0 );
 
     this.update = function( delta ) {
@@ -36,8 +41,6 @@ Boidling = function () {
         var moveMult = delta * movementSpeed;
         var rotMult = delta * rollSpeed;
 
-        mesh.translateX( moveVector.x * moveMult );
-        mesh.translateY( moveVector.y * moveMult );
         mesh.translateZ( moveVector.z * moveMult );
 
         tmpQuaternion.set( rotationVector.x * rotMult, rotationVector.y * rotMult, rotationVector.z * rotMult, 1 ).normalize();
@@ -49,28 +52,15 @@ Boidling = function () {
 
     };
 
-    this.updateMovementVector = function() {
-
-        var forward = ( moveState.forward || ( autoForward && !moveState.back ) ) ? 1 : 0;
-
-        moveVector.x = ( -moveState.left    + moveState.right );
-        moveVector.y = ( -moveState.down    + moveState.up );
-        moveVector.z = ( -forward + moveState.back );
-
-        //console.log( 'move:', [ this.moveVector.x, this.moveVector.y, this.moveVector.z ] );
-
-    };
-
     this.updateRotationVector = function() {
 
-        rotationVector.x = ( -moveState.pitchDown + moveState.pitchUp );
-        rotationVector.y = ( -moveState.yawRight  + moveState.yawLeft );
-        rotationVector.z = ( -moveState.rollRight + moveState.rollLeft );
+        rotationVector.x = (moveState.pitch);
+        rotationVector.y = (moveState.yaw);
+        rotationVector.z = (moveState.roll);
 
         // console.log( 'rotate:', [ this.rotationVector.x, this.rotationVector.y, this.rotationVector.z ] );
 
     };
 
-    this.updateMovementVector();
     this.updateRotationVector();
 };
