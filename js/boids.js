@@ -9,7 +9,7 @@ animate();
 
 function init() {
 
-    numOfBoidlings = 300;
+    numOfBoidlings = 1;
 
     clock = new THREE.Clock();
 
@@ -38,36 +38,6 @@ function init() {
     flyControls.movementSpeed = 200;
     flyControls.domElement = document.querySelector("#WebGL-output");
     flyControls.rollSpeed = Math.PI / 4;
-
-
-    // var urlPrefix = "images/"
-    // var urls = [urlPrefix + "posx.jpg", urlPrefix + "negx.jpg",
-    //             urlPrefix + "posy.jpg", urlPrefix + "negy.jpg",
-    //             urlPrefix + "posz.jpg", urlPrefix + "negz.jpg"];
-    // THREE.ImageUtils.crossOrigin = '';
-    // var cubemap = THREE.ImageUtils.loadTextureCube(urls);
-    // cubemap.format = THREE.RGBFormat
-
-    // var shader = THREE.ShaderLib['cube'];
-    // shader.uniforms['tCube'].value = cubemap;
-
-    // var skyBoxMaterial = new THREE.ShaderMaterial( {
-    //     fragmentShader: shader.fragmentShader,
-    //     vertexShader: shader.vertexShader,
-    //     uniforms: shader.uniforms,
-    //     depthWrite: false,
-    //     side: THREE.BackSide
-    // });
-
-    // // create skybox mesh
-    // var skybox = new THREE.Mesh(
-    //     new THREE.BoxGeometry(1000, 1000, 1000),
-    //     skyBoxMaterial
-    // );
-
-    // scene.add(skybox);
-
-    //$("#WebGL-output").append(renderer.domElement);
 
     document.body.appendChild(renderer.domElement);
 
