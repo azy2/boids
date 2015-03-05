@@ -1,71 +1,82 @@
 Boidling = function () {
-    // var geometry = new THREE.CylinderGeometry(
-    //     0, // radiusTop
-    //     20, // radiusBottom
-    //     100, // height
-    //     20, // radiusSegments
-    //     20, // heightSegments
-    //     false // openEnded
-    // );
-    var geometry = new THREE.SphereGeometry(
-        1000,
-        500,
-        500
+    var geometry = new THREE.CylinderGeometry(
+        0, // radiusTop
+        20, // radiusBottom
+        100, // height
+        20, // radiusSegments
+        20, // heightSegments
+        false // openEnded
     );
 
     var color = Math.floor(Math.random() * 16777215).toString(16)
     var material = new THREE.MeshBasicMaterial( {color: parseInt(color, 16), wireframe: true} );
 
-    var mesh = new THREE.Mesh(geometry, material);
+    var coneMesh = new THREE.Mesh(geometry, material);
+    coneMesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
 
-    mesh.translateX(Math.floor((Math.random() * 100) - 50));
-    mesh.translateY(Math.floor((Math.random() * 100) - 50));
-    mesh.translateZ(Math.floor((Math.random() * 100) - 50));
+    var mesh = new THREE.Object3D();
+    mesh.add(coneMesh);
+
+    var axisHelper = new THREE.AxisHelper(50);
+    mesh.add(axisHelper);
+
+    // mesh.position.y = 10;
+    mesh.lookAt(new THREE.Vector3(0, 0, 0));
 
     this.getMesh = function() {
         return mesh;
     }
 
     var autoForward = false;
-    var movementSpeed = 100;
-    var rollSpeed = Math.PI / 12;
+    var movementSpeed = 10;
+    var rotSpeed = Math.PI / 12;
 
     var tmpQuaternion = new THREE.Quaternion();
 
+    var currentDirVector = new THREE.Vector3();
 
-    //var moveState = {pitch: (Math.random() * 10) - 5, yaw: (Math.random() * 10) - 5, roll: (Math.random() * 10) - 5};
-    var moveState = {pitch: 0, yaw: 0, roll: 0};
-    var rotationVector = new THREE.Vector3( 0, 0, 0 );
-
-    var target = new THREE.Vector3(0, 1, 0);
+    var targetAxis = new THREE.Vector3();
+    var targetAngle = 0;
 
     this.update = function(delta) {
+        this.computeCurrentDirVector();
+        this.updateTarget(camera.position);
         this.updateMovement(delta);
-        target = camera.position;
-        this.updateRotationVector();
     };
 
     this.updateMovement = function( delta ) {
 
         var moveMult = delta * movementSpeed;
-        var rotMult = delta * rollSpeed;
+        var rotMult = delta * rotSpeed;
 
-        if (autoForward) mesh.translateY( moveMult );
+        if (targetAngle != 0) {
+            var rotationAngle = Math.min(targetAngle, rotMult);
+            var toLookAt = new THREE.Vector3();
+            toLookAt.copy(currentDirVector);
+            toLookAt.applyAxisAngle(targetAxis, rotationAngle);
+            mesh.lookAt(toLookAt);
+        }
 
-        tmpQuaternion.set( rotationVector.x * rotMult, rotationVector.y * rotMult, rotationVector.z * rotMult, 1 ).normalize();
-        mesh.quaternion.multiply( tmpQuaternion );
-
-        // expose the rotation vector for convenience
-        mesh.rotation.setFromQuaternion( mesh.quaternion, mesh.rotation.order);
+        if (autoForward) {
+            mesh.position = mesh.position.add(currentDirVector.multiplyScalar(moveMult));
+        }
     };
 
-    this.updateRotationVector = function() {
+    this.computeCurrentDirVector = function() {
+        currentDirVector = mesh.localToWorld(new THREE.Vector3(0, 0, 1)).sub(mesh.localToWorld(new THREE.Vector3(0, 0, 0))).normalize();
+    };
 
-        rotationVector.x = (moveState.pitch);
-        rotationVector.y = (moveState.yaw);
-        rotationVector.z = (moveState.roll);
-
-        // console.log( 'rotate:', [ this.rotationVector.x, this.rotationVector.y, this.rotationVector.z ] );
-
+    this.updateTarget = function(targetVec) {
+        if (targetVec === null) {
+            console.log('what this isn\'t implemented crazy');
+        } else {
+            var targetDirVec = new THREE.Vector3();
+            targetDirVec.copy(targetVec);
+            targetDirVec.sub(mesh.position).normalize();
+            console.log(targetDirVec);
+            targetAngle = currentDirVector.angleTo(targetDirVec);
+            targetAxis.copy(currentDirVector);
+            targetAxis.cross(targetDirVec).normalize();
+        }
     };
 };

@@ -1,4 +1,4 @@
-var scene, camera, renderer;
+var scene, camera, renderer, axisHelper;
 var controls;
 var clock, flyControls;
 var boidlings = [];
@@ -17,9 +17,13 @@ function init() {
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 5000);
 
+    axisHelper = new THREE.AxisHelper(50);
+
+    scene.add(axisHelper);
+
     for (var i = 0; i < numOfBoidlings; i++) {
         boidlings[i] = new Boidling();
-        scene.add(boidlings[i].getMesh());
+        //scene.add(boidlings[i].getMesh());
     }
 
     renderer = new THREE.WebGLRenderer();
@@ -28,7 +32,7 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.showMapEnabled = true;
 
-    camera.position.x = -1500;
+    camera.position.x = -200;
     camera.position.y = 0;
     camera.position.z = 0;
     camera.lookAt(new THREE.Vector3(0, 0, 0));
