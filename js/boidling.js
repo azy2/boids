@@ -20,16 +20,19 @@ Boidling = function () {
     var axisHelper = new THREE.AxisHelper(50);
     mesh.add(axisHelper);
 
-    // mesh.position.y = 10;
+    //mesh.position.y = 10;
+    mesh.position.x = (Math.random() * 100) - 50;
+    mesh.position.y = (Math.random() * 100) - 50;
+    mesh.position.z = (Math.random() * 100) - 50;
     mesh.lookAt(new THREE.Vector3(0, 0, 0));
 
     this.getMesh = function() {
         return mesh;
     }
 
-    var autoForward = false;
-    var movementSpeed = 10;
-    var rotSpeed = Math.PI / 12;
+    var autoForward = true;
+    var movementSpeed = 100;
+    var rotSpeed = Math.PI / 6;
 
     var tmpQuaternion = new THREE.Quaternion();
 
@@ -54,16 +57,26 @@ Boidling = function () {
             var toLookAt = new THREE.Vector3();
             toLookAt.copy(currentDirVector);
             toLookAt.applyAxisAngle(targetAxis, rotationAngle);
+            toLookAt.add(mesh.position);
             mesh.lookAt(toLookAt);
         }
+        // mesh.lookAt(camera.position);
 
         if (autoForward) {
-            mesh.position = mesh.position.add(currentDirVector.multiplyScalar(moveMult));
+            mesh.translateZ(moveMult);
         }
     };
 
     this.computeCurrentDirVector = function() {
-        currentDirVector = mesh.localToWorld(new THREE.Vector3(0, 0, 1)).sub(mesh.localToWorld(new THREE.Vector3(0, 0, 0))).normalize();
+        // currentDirVector = new THREE.Vector3(0, 0, 1);
+        // currentDirVector.add(mesh.position).normalize();
+        // currentDirVector = mesh.localToWorld(new THREE.Vector3(0, 0, 1)).sub(mesh.localToWorld(new THREE.Vector3(0, 0, 0))).normalize();
+        currentDirVector.copy(mesh.localToWorld(new THREE.Vector3(0, 0, 1)));
+        currentDirVector.sub(mesh.localToWorld(new THREE.Vector3(0, 0, 0)));
+        currentDirVector.normalize();
+        //currentDirVector.normalize();
+        console.log(currentDirVector);
+        //mesh.localToWorld(new THREE.Vector3(0, 0, 1)).sub(mesh.localToWorld(new THREE.Vector3(0, 0, 0))).normalize();
     };
 
     this.updateTarget = function(targetVec) {
@@ -73,10 +86,12 @@ Boidling = function () {
             var targetDirVec = new THREE.Vector3();
             targetDirVec.copy(targetVec);
             targetDirVec.sub(mesh.position).normalize();
-            console.log(targetDirVec);
+            // console.log(targetDirVec);
             targetAngle = currentDirVector.angleTo(targetDirVec);
+            // console.log(targetAngle);
             targetAxis.copy(currentDirVector);
             targetAxis.cross(targetDirVec).normalize();
+            // console.log(targetAxis);
         }
     };
 };

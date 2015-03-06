@@ -9,7 +9,7 @@ animate();
 
 function init() {
 
-    numOfBoidlings = 1;
+    numOfBoidlings = 100;
 
     clock = new THREE.Clock();
 
@@ -23,7 +23,7 @@ function init() {
 
     for (var i = 0; i < numOfBoidlings; i++) {
         boidlings[i] = new Boidling();
-        //scene.add(boidlings[i].getMesh());
+        scene.add(boidlings[i].getMesh());
     }
 
     renderer = new THREE.WebGLRenderer();
@@ -35,7 +35,7 @@ function init() {
     camera.position.x = -200;
     camera.position.y = 0;
     camera.position.z = 0;
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    camera.lookAt(new THREE.Vector3(0, 10, 0));
 
     flyControls = new THREE.FlyControls(camera);
 
