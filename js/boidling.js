@@ -1,15 +1,15 @@
 Boidling = function () {
     var geometry = new THREE.CylinderGeometry(
         0, // radiusTop
-        20, // radiusBottom
-        100, // height
-        20, // radiusSegments
-        20, // heightSegments
+        10, // radiusBottom
+        50, // height
+        10, // radiusSegments
+        10, // heightSegments
         false // openEnded
     );
 
     var color = Math.floor(Math.random() * 16777215).toString(16)
-    var material = new THREE.MeshBasicMaterial( {color: parseInt(color, 16), wireframe: true} );
+    var material = new THREE.MeshBasicMaterial( {color: parseInt(color, 16), wireframe: false} );
 
     var coneMesh = new THREE.Mesh(geometry, material);
     coneMesh.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
@@ -17,14 +17,17 @@ Boidling = function () {
     var mesh = new THREE.Object3D();
     mesh.add(coneMesh);
 
-    var axisHelper = new THREE.AxisHelper(50);
-    mesh.add(axisHelper);
+    // var axisHelper = new THREE.AxisHelper(50);
+    // mesh.add(axisHelper);
 
     //mesh.position.y = 10;
-    mesh.position.x = (Math.random() * 100) - 50;
-    mesh.position.y = (Math.random() * 100) - 50;
-    mesh.position.z = (Math.random() * 100) - 50;
+    mesh.position.x = (Math.random() * 700) - 350;
+    mesh.position.y = (Math.random() * 700) - 350;
+    mesh.position.z = (Math.random() * 700) - 350;
+
     mesh.lookAt(new THREE.Vector3(0, 0, 0));
+
+
 
     this.getMesh = function() {
         return mesh;
@@ -32,7 +35,7 @@ Boidling = function () {
 
     var autoForward = true;
     var movementSpeed = 100;
-    var rotSpeed = Math.PI / 6;
+    var rotSpeed = Math.PI / 4;
 
     var tmpQuaternion = new THREE.Quaternion();
 
@@ -41,13 +44,7 @@ Boidling = function () {
     var targetAxis = new THREE.Vector3();
     var targetAngle = 0;
 
-    this.update = function(delta) {
-        this.computeCurrentDirVector();
-        this.updateTarget(camera.position);
-        this.updateMovement(delta);
-    };
-
-    this.updateMovement = function( delta ) {
+    this.updateMovement = function(delta) {
 
         var moveMult = delta * movementSpeed;
         var rotMult = delta * rotSpeed;
@@ -60,38 +57,37 @@ Boidling = function () {
             toLookAt.add(mesh.position);
             mesh.lookAt(toLookAt);
         }
-        // mesh.lookAt(camera.position);
 
         if (autoForward) {
             mesh.translateZ(moveMult);
         }
+
+
     };
 
     this.computeCurrentDirVector = function() {
-        // currentDirVector = new THREE.Vector3(0, 0, 1);
-        // currentDirVector.add(mesh.position).normalize();
-        // currentDirVector = mesh.localToWorld(new THREE.Vector3(0, 0, 1)).sub(mesh.localToWorld(new THREE.Vector3(0, 0, 0))).normalize();
         currentDirVector.copy(mesh.localToWorld(new THREE.Vector3(0, 0, 1)));
         currentDirVector.sub(mesh.localToWorld(new THREE.Vector3(0, 0, 0)));
         currentDirVector.normalize();
-        //currentDirVector.normalize();
-        console.log(currentDirVector);
-        //mesh.localToWorld(new THREE.Vector3(0, 0, 1)).sub(mesh.localToWorld(new THREE.Vector3(0, 0, 0))).normalize();
     };
 
-    this.updateTarget = function(targetVec) {
-        if (targetVec === null) {
-            console.log('what this isn\'t implemented crazy');
-        } else {
-            var targetDirVec = new THREE.Vector3();
-            targetDirVec.copy(targetVec);
-            targetDirVec.sub(mesh.position).normalize();
-            // console.log(targetDirVec);
-            targetAngle = currentDirVector.angleTo(targetDirVec);
-            // console.log(targetAngle);
-            targetAxis.copy(currentDirVector);
-            targetAxis.cross(targetDirVec).normalize();
-            // console.log(targetAxis);
-        }
+    this.updateTargetFromVector = function(targetVec) {
+        this.computeCurrentDirVector();
+        var targetDirVec = new THREE.Vector3();
+        targetDirVec.copy(targetVec);
+        targetDirVec.sub(mesh.position).normalize();
+        targetAngle = currentDirVector.angleTo(targetDirVec);
+        targetAxis.copy(currentDirVector);
+        targetAxis.cross(targetDirVec).normalize();
     };
+
+    this.getCurrentDir = function() {
+        return currentDirVector;
+    };
+
+    this.getPosition = function() {
+        return mesh.position;
+    }
+
+    this.computeCurrentDirVector();
 };

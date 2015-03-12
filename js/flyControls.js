@@ -138,19 +138,16 @@ THREE.FlyControls = function ( object, domElement ) {
 
         if ( !this.dragToLook || this.mouseStatus > 0 ) {
 
-            var container = this.getContainerDimensions();
-            var halfWidth  = container.size[ 0 ] / 2;
-            var halfHeight = container.size[ 1 ] / 2;
+            // var container = this.getContainerDimensions();
+            // var halfWidth  = container.size[ 0 ] / 2;
+            // var halfHeight = container.size[ 1 ] / 2;
 
-            // console.log('mouseMove', container);
+            // this.moveState.yawLeft   = - ( ( event.pageX - container.offset[ 0 ] ) - halfWidth  ) / halfWidth;
+            // this.moveState.pitchDown =   ( ( event.pageY - container.offset[ 1 ] ) - halfHeight ) / halfHeight;
 
-            this.moveState.yawLeft   = - ( ( event.pageX - container.offset[ 0 ] ) - halfWidth  ) / halfWidth;
-            this.moveState.pitchDown =   ( ( event.pageY - container.offset[ 1 ] ) - halfHeight ) / halfHeight;
-            // console.log( 'mousemove:', this.moveState.yawLeft);
-            // console.log( 'mousemove:', this.moveState.pitchDown);
+            // this.updateRotationVector();
 
-            this.updateRotationVector();
-
+            console.log(event.pageX, event.pageY);
         }
 
     };

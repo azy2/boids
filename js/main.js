@@ -1,15 +1,12 @@
 var scene, camera, renderer, axisHelper;
 var controls;
 var clock, flyControls;
-var boidlings = [];
-var numOfBoidlings;
+var boid;
 
 init();
 animate();
 
 function init() {
-
-    numOfBoidlings = 100;
 
     clock = new THREE.Clock();
 
@@ -21,7 +18,11 @@ function init() {
 
     scene.add(axisHelper);
 
-    for (var i = 0; i < numOfBoidlings; i++) {
+    boid = new Boid();
+
+    var boidlings = boid.getBoidlings();
+
+    for (var i = 0; i < boid.numOfBoidlings; i++) {
         boidlings[i] = new Boidling();
         scene.add(boidlings[i].getMesh());
     }
@@ -39,7 +40,7 @@ function init() {
 
     flyControls = new THREE.FlyControls(camera);
 
-    flyControls.movementSpeed = 200;
+    flyControls.movementSpeed = 400;
     flyControls.domElement = document.querySelector("#WebGL-output");
     flyControls.rollSpeed = Math.PI / 4;
 
@@ -62,9 +63,7 @@ function animate() {
     var delta = clock.getDelta();
     flyControls.update(delta);
 
-    for (var i = 0; i < numOfBoidlings; i++) {
-        boidlings[i].update(delta);
-    }
+    boid.update(delta);
 
     renderer.render( scene, camera );
 }
