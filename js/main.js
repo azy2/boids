@@ -21,10 +21,13 @@ function init() {
     boid = new Boid();
 
     var boidlings = boid.getBoidlings();
+    var sharks = boid.getSharks();
 
     for (var i = 0; i < boid.numOfBoidlings; i++) {
-        boidlings[i] = new Boidling();
         scene.add(boidlings[i].getMesh());
+    }
+    for (var i = 0; i < boid.numOfSharks; i++) {
+        scene.add(sharks[i].getMesh());
     }
 
     renderer = new THREE.WebGLRenderer();
